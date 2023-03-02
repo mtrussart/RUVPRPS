@@ -16,7 +16,8 @@
 #' @importFrom gridExtra grid.arrange
 #' @export
 
-
+## put as options the different variable
+## batch instead of time
 norm_assessment = function(
         sce,
         apply.log = FALSE,
@@ -83,6 +84,12 @@ norm_assessment = function(
 
 
     # ### Assessment on the library size ####
+    ## Compute regression between library size and PCs
+    ## Regression on the library size
+    message("Regression based on Library size")
+    reg_lib_size= RUVPRPS::regression_pc(pca=data_pca,
+                               normalization=normalizations,
+                               regression_var=library_size)
 
     #### Generate pdf file to save the plots
     if (!is.null(output_file)){
@@ -93,7 +100,8 @@ norm_assessment = function(
             do.call(grid.arrange,
                 c(plot_TIME,
                   ncol = 4))
+            plot(reg_lib_size$plot)
         dev.off()
     }
-    return(list(plot_bio=plot_BIO,plot_time=plot_TIME))
+    return(list(plot_bio=plot_BIO,plot_time=plot_TIME,plot_reg_lib_size=reg_lib_size$plot))
 }
